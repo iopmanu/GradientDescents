@@ -14,12 +14,13 @@ def main() -> None:
         'kwargs': {
             'dimension': dimension,
             'loss': 'MSE',
-            'max_iter': 20,
-            'momentum': 0.9
+            'max_iter': 52,
+            'momentum': 0.9,
+            'iter': 50
         }
     }
 
-    for descent_name in ['full', 'stochastic', 'momentum']:#, 'adam']:
+    for descent_name in ['full', 'stochastic', 'momentum', 'adam']:
         descent_config['descent_name'] = descent_name
         descent = get_descent(descent_config)
 

@@ -11,9 +11,9 @@ def get_descent(descent_config: dict) -> BaseDescent:
 
     descent_mapping: Dict[str, Type[BaseDescent]] = {
         'full': VanillaGradientDescent, #if not regularized else VanillaGradientDescentReg,
-        'stochastic': StochasticGradientDescent, #if not regularized else StochasticDescentReg,
-        'momentum': MomentumDescent #if not regularized else MomentumDescentReg,
-        #'adam': Adam if not regularized else AdamReg,
+        'stochastic': StochasticGradientDescent,
+        'momentum': MomentumDescent,
+        'adam': Adam
         #'adamax': Adamax
     }
 
@@ -74,3 +74,30 @@ class MomentumDescent(VanillaGradientDescent):
         self.w -= self._h
         return -self._h
 
+
+class Adam(StochasticGradientDescent):
+    """
+    Adaptive Moment Estimation.
+    Using Adaptive Step and Momentum methods of optimizations
+    for Stochastic Gradient Descent
+    """
+    def __init__(self, beta1: float = 0.9, beta2: float = 0.999, eps: float = 1e-8, **kwargs):
+        super().__init__(**kwargs)
+        self._beta1 = beta1
+        self._beta2 = beta2
+        self._m = np.zeros(self.w.shape[0])
+        self._v = np.zeros(self.w.shape[0])
+        self._eps = eps
+
+    def update_weights(self, gradient: np.ndarray) -> np.ndarray:
+        k = self.iter
+
+        self._m = self._beta1 * self._m + (1 - self._beta1) * gradient
+        self._v = self._beta2 * self._v + (1 - self._beta2) * (gradient ** 2)
+        m_hat = self._m / (1 - self._beta1 ** k)
+        v_hat = self._v / (1 - self._beta2 ** k)
+
+        w_prev = self.w.copy()
+        self.w -= m_hat * self.lr() / (v_hat ** 0.5 + self._eps)
+
+        return self.w - w_prev
