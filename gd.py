@@ -97,7 +97,7 @@ class BaseDescent(object):
         if not hasattr(self, 'stop_grad'):
             self.stop_grad = 1e-3
 
-    def iterations(self, x, y):
+    def iterations(self, x, y) -> np.ndarray:
         updated_weights, previous_loss = None, self.calc_loss(x, y)
         for i in range(self.max_iter):
             if previous_loss < self.stop_grad:
