@@ -1,9 +1,34 @@
-from gd import BaseDescent
+from gd_modifications import get_descent
+import numpy as np
+
 
 def main() -> None:
-    d = BaseDescent(max_iter=5, dimension=3, learning_rate='constant')
-    print(d.__dict__)
+    num_objects = 100
+    dimension = 5
 
+    x = np.random.rand(num_objects, dimension)
+    y = np.random.rand(num_objects)
+
+    descent_config = {
+        'descent_name': 'some name that we will replace in the future',
+        'kwargs': {
+            'dimension': dimension,
+            'loss': 'MSE',
+            'max_iter': 20
+        }
+    }
+
+    for descent_name in ['full', 'stochastic']:#, 'momentum', 'adam']:
+        descent_config['descent_name'] = descent_name
+        descent = get_descent(descent_config)
+
+        diff = descent.iterations(x, y)
+        gradient = descent.calc_gradient(x, y)
+        predictions = descent.predict(x)
+
+        assert gradient.shape[0] == dimension, f'Gradient failed for descent {descent_name}'
+        assert diff.shape[0] == dimension, f'Weights failed for descent {descent_name}'
+        assert predictions.shape == y.shape, f'Prediction failed for descent {descent_name}'
 
 if __name__ == "__main__":
     main()

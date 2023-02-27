@@ -10,8 +10,8 @@ def get_descent(descent_config: dict) -> BaseDescent:
     regularized = descent_config.get('regularized', False)
 
     descent_mapping: Dict[str, Type[BaseDescent]] = {
-        'full': VanillaGradientDescent #if not regularized else VanillaGradientDescentReg,
-        #'stochastic': StochasticDescent if not regularized else StochasticDescentReg,
+        'full': VanillaGradientDescent, #if not regularized else VanillaGradientDescentReg,
+        'stochastic': StochasticGradientDescent #if not regularized else StochasticDescentReg,
         #'momentum': MomentumDescent if not regularized else MomentumDescentReg,
         #'adam': Adam if not regularized else AdamReg,
         #'adamax': Adamax
@@ -44,4 +44,19 @@ class VanillaGradientDescent(BaseDescent):
             less_delta = x[mask].T @ difference[mask]
             more_delta = x[~mask].T @ np.sign(difference[~mask])
             return 1 / y.shape[0] * (less_delta - more_delta)
+
+
+class StochasticGradientDescent(VanillaGradientDescent):
+    """
+    Mini-batch gradient descent
+    """
+    def __init__(self, batch_size: int = 50, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self._batch_size = batch_size
+
+    def calc_gradient(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
+        idx = np.random.randint(0, x.shape[0], self._batch_size)
+        x, y = x[idx], y[idx]
+
+        return super().calc_gradient(x, y)
 
