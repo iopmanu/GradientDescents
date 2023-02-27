@@ -54,7 +54,7 @@ class BaseDescent(object):
                       'stop_grad', 'dimension', 'momentum', 'loss'}
 
     __mse_dict = {'MSE': LossFunction.MSE, 'MAE': LossFunction.MAE,
-                'Huber': LossFunction.Huber, 'LogCosh': LossFunction.LogCosh}
+                  'Huber': LossFunction.Huber, 'LogCosh': LossFunction.LogCosh}
 
     def __init__(self, **kwargs):
         for param in kwargs:
@@ -83,8 +83,8 @@ class BaseDescent(object):
 
         if not hasattr(self, 'loss'):
             self.loss = LossFunction.MSE
-        elif kwargs.get('loss') in self._mse_dict:
-            self.loss = self._mse_dict[kwargs.get('loss')]
+        elif kwargs.get('loss') in self.__mse_dict:
+            self.loss = self.__mse_dict[kwargs.get('loss')]
         else:
             raise ValueError("Unexpected loss function as argue")
 
