@@ -37,23 +37,23 @@ class LossFunction(Enum):
 
 class BaseDescent(object):
     """
-        iter:                   iteration number
-        max_iter:               maximum number of iterations
+        iter:                   iteration number.
+        max_iter:               maximum number of iterations.
         learning_rate:          the learning rate schedule:
                                     ‘constant’: eta = eta0;
                                     ‘optimal’: eta = lambda / (s0 / (s0 + k));
-        momentum:               param for optimization of gradient descent
-        eta0:                   param which is using for calc 'constant' learning rate
-        lambda_:                 param which is using for calc 'optimal' learning rate
-        stop_grad:              checking mean loss absolute value for stop criteria
-        dimension:              quantity of features in feature matrix
-        loss:                   loss function
+        momentum:               param for optimization of gradient descent.
+        eta0:                   param which is using for calc 'constant' learning rate.
+        lambda_:                 param which is using for calc 'optimal' learning rate.
+        stop_grad:              checking mean loss absolute value for stop criteria.
+        dimension:              quantity of features in feature matrix.
+        loss:                   loss function.
 
     """
     allowed_kwargs = {'iter', 'max_iter', 'learning_rate', 'eta0', 'lambda_',
                       'stop_grad', 'dimension', 'momentum', 'loss'}
 
-    _mse_dict = {'MSE': LossFunction.MSE, 'MAE': LossFunction.MAE,
+    __mse_dict = {'MSE': LossFunction.MSE, 'MAE': LossFunction.MAE,
                 'Huber': LossFunction.Huber, 'LogCosh': LossFunction.LogCosh}
 
     def __init__(self, **kwargs):
