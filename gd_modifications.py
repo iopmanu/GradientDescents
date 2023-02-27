@@ -11,8 +11,8 @@ def get_descent(descent_config: dict) -> BaseDescent:
 
     descent_mapping: Dict[str, Type[BaseDescent]] = {
         'full': VanillaGradientDescent, #if not regularized else VanillaGradientDescentReg,
-        'stochastic': StochasticGradientDescent #if not regularized else StochasticDescentReg,
-        #'momentum': MomentumDescent if not regularized else MomentumDescentReg,
+        'stochastic': StochasticGradientDescent, #if not regularized else StochasticDescentReg,
+        'momentum': MomentumDescent #if not regularized else MomentumDescentReg,
         #'adam': Adam if not regularized else AdamReg,
         #'adamax': Adamax
     }
@@ -59,4 +59,18 @@ class StochasticGradientDescent(VanillaGradientDescent):
         x, y = x[idx], y[idx]
 
         return super().calc_gradient(x, y)
+
+
+class MomentumDescent(VanillaGradientDescent):
+    """
+    Momentum optimization for gradient descent
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._h = np.zeros(self.w.shape[0])
+
+    def update_weights(self, gradient: np.ndarray) -> np.ndarray:
+        self._h = self.momentum * self._h + self.lr() * gradient
+        self.w -= self._h
+        return -self._h
 

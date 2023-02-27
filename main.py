@@ -14,11 +14,12 @@ def main() -> None:
         'kwargs': {
             'dimension': dimension,
             'loss': 'MSE',
-            'max_iter': 20
+            'max_iter': 20,
+            'momentum': 0.9
         }
     }
 
-    for descent_name in ['full', 'stochastic']:#, 'momentum', 'adam']:
+    for descent_name in ['full', 'stochastic', 'momentum']:#, 'adam']:
         descent_config['descent_name'] = descent_name
         descent = get_descent(descent_config)
 
@@ -26,9 +27,12 @@ def main() -> None:
         gradient = descent.calc_gradient(x, y)
         predictions = descent.predict(x)
 
+        print(descent.calc_loss(x, y))
+
         assert gradient.shape[0] == dimension, f'Gradient failed for descent {descent_name}'
         assert diff.shape[0] == dimension, f'Weights failed for descent {descent_name}'
         assert predictions.shape == y.shape, f'Prediction failed for descent {descent_name}'
+        assert descent.calc_loss(x, y) < 10.0
 
 if __name__ == "__main__":
     main()
