@@ -4,5 +4,9 @@ from gd_modifications import *
 __all__ = [
     'LearningRate',
     'BaseDescent',
-    'VanillaGradientDescent'
+    'VanillaGradientDescent',
+    'StochasticGradientDescentReg',
+    'StochasticGradientDescent',
+    'MomentumDescent',
+    'Adam'
 ]
