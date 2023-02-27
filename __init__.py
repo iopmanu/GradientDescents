@@ -1,5 +1,8 @@
-from gd import LearningRate
+from gd import *
+from gd_modifications import *
 
 __all__ = [
-    'LearningRate'
+    'LearningRate',
+    'BaseDescent',
+    'VanillaGradientDescent'
 ]
