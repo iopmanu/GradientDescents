@@ -53,6 +53,9 @@ class BaseDescent(object):
     allowed_kwargs = {'iter', 'max_iter', 'learning_rate', 'eta0', 'lambda_',
                       'stop_grad', 'dimension', 'momentum', 'loss'}
 
+    _mse_dict = {'MSE': LossFunction.MSE, 'MAE': LossFunction.MAE,
+                'Huber': LossFunction.Huber, 'LogCosh': LossFunction.LogCosh}
+
     def __init__(self, **kwargs):
         for param in kwargs:
             if param not in self.allowed_kwargs:
@@ -80,6 +83,10 @@ class BaseDescent(object):
 
         if not hasattr(self, 'loss'):
             self.loss = LossFunction.MSE
+        elif kwargs.get('loss') in self._mse_dict:
+            self.loss = self._mse_dict[kwargs.get('loss')]
+        else:
+            raise ValueError("Unexpected loss function as argue")
 
         if not hasattr(self, 'max_iter'):
             self.max_iter = 1
