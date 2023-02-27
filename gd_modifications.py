@@ -7,14 +7,13 @@ import numpy as np
 
 def get_descent(descent_config: dict) -> BaseDescent:
     descent_name = descent_config.get('descent_name', 'full')
-    regularized = descent_config.get('regularized', False)
+    regularized = descent_config.get('regularized', True)
 
     descent_mapping: Dict[str, Type[BaseDescent]] = {
-        'full': VanillaGradientDescent, #if not regularized else VanillaGradientDescentReg,
-        'stochastic': StochasticGradientDescent,
+        'full': VanillaGradientDescent,
+        'stochastic': StochasticGradientDescent if not regularized else StochasticGradientDescentReg,
         'momentum': MomentumDescent,
         'adam': Adam
-        #'adamax': Adamax
     }
 
     if descent_name not in descent_mapping:
@@ -65,7 +64,7 @@ class MomentumDescent(VanillaGradientDescent):
     """
     Momentum optimization for gradient descent
     """
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self._h = np.zeros(self.w.shape[0])
 
@@ -81,7 +80,7 @@ class Adam(StochasticGradientDescent):
     Using Adaptive Step and Momentum methods of optimizations
     for Stochastic Gradient Descent
     """
-    def __init__(self, beta1: float = 0.9, beta2: float = 0.999, eps: float = 1e-8, **kwargs):
+    def __init__(self, beta1: float = 0.9, beta2: float = 0.999, eps: float = 1e-8, **kwargs) -> None:
         super().__init__(**kwargs)
         self._beta1 = beta1
         self._beta2 = beta2
@@ -101,3 +100,12 @@ class Adam(StochasticGradientDescent):
         self.w -= m_hat * self.lr() / (v_hat ** 0.5 + self._eps)
 
         return self.w - w_prev
+
+
+class StochasticGradientDescentReg(StochasticGradientDescent):
+    def __init__(self, mu: float = 0.1, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self._mu = mu
+
+    def calc_gradient(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
+        return super().calc_gradient(x, y) + self.w * self._mu
