@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+    python:
+        image: python:3.8-alpine
+        container_name: py
+    tests:
+        build: ./docker
+        container_name: tests
+        depends_on: 
+            - python
