@@ -1,4 +1,4 @@
-from gd_modifications import get_descent
+from source.gd_modifications import *
 import numpy as np
 
 
