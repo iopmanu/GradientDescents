@@ -95,7 +95,20 @@ class BaseDescent(object):
             self.momentum = 0.0
 
         if not hasattr(self, 'stop_grad'):
-            self.stop_grad = 1e-6
+            self.stop_grad = 1e-3
+
+    def iterations(self, x, y):
+        updated_weights, previous_loss = None, self.calc_loss(x, y)
+        for i in range(self.max_iter):
+            if previous_loss < self.stop_grad:
+                break
+
+            updated_weights = self.step(x, y)
+            if stepped_loss := self.calc_loss(x, y) > previous_loss:
+                break
+            previous_loss = stepped_loss
+
+        return updated_weights
 
     def step(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         return self.update_weights(self.calc_gradient(x, y))
