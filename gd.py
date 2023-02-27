@@ -3,7 +3,7 @@ import numpy as np
 
 
 class LearningRate:
-    def __init__(self, lambda_: float = 1e-3, s0: float = 1, p: float = 0.5, eta0: float = None) -> None:
+    def __init__(self, lambda_: float = 1e-3, s0: float = 1, p: float = 0.5, eta0: float = np.nan) -> None:
         """
         :param lambda_: weight of the learning rate
         :param s0: param for a calculation of an optimal learning rate
@@ -22,7 +22,7 @@ class LearningRate:
         :return: value of the learning rate for current iteration
         """
         self._iteration += 1
-        if self._eta0 is None:
+        if self._eta0 is not np.nan:
             return self._eta0
         else:
             return self._lambda * (self._s0 / (self._s0 + self._iteration)) ** self._p
@@ -44,13 +44,13 @@ class BaseDescent(object):
                                     ‘optimal’: eta = lambda / (s0 / (s0 + k));
         momentum:               param for optimization of gradient descent
         eta0:                   param which is using for calc 'constant' learning rate
-        lambda:                 param which is using for calc 'optimal' learning rate
+        lambda_:                 param which is using for calc 'optimal' learning rate
         stop_grad:              checking mean loss absolute value for stop criteria
         dimension:              quantity of features in feature matrix
         loss:                   loss function
 
     """
-    allowed_kwargs = {'iter', 'max_iter', 'learning_rate', 'eta0', 'lambda',
+    allowed_kwargs = {'iter', 'max_iter', 'learning_rate', 'eta0', 'lambda_',
                       'stop_grad', 'dimension', 'momentum', 'loss'}
 
     def __init__(self, **kwargs):
@@ -65,9 +65,11 @@ class BaseDescent(object):
 
         if hasattr(self, 'learning_rate'):
             if kwargs.get('learning_rate') == 'constant':
-                self.lr = LearningRate(eta0=kwargs.get('eta0'))
+                src_eta0 = kwargs.get('eta0') if kwargs.get('eta0') else 1.0
+                self.lr = LearningRate(eta0=src_eta0)
             elif kwargs.get('learning_rate') == 'optimal':
-                self.lr = LearningRate(lambda_=kwargs.get('lambda'))
+                src_lambda = kwargs.get('lambda_') if kwargs.get('lambda_') else 1e-3
+                self.lr = LearningRate(lambda_=src_lambda)
             else:
                 raise TypeError('Invalid value for learning rate param')
         else:
@@ -123,4 +125,3 @@ class BaseDescent(object):
         :return: predicted vector of target variable
         """
         return x @ self.w
-
